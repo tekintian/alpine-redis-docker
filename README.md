@@ -25,6 +25,7 @@ requirepass 123456789
 ~~~
 
 
+https://hub.docker.com/r/tekintian/redis/tags
 
 
 拉取
