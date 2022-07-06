@@ -10,11 +10,14 @@ RUN apk add --no-cache \
 # add tzdata for https://github.com/docker-library/redis/issues/138
 		tzdata
 
+ENV TZ PRC
 ENV REDIS_VERSION 7.0.2
 ENV REDIS_DOWNLOAD_URL http://download.redis.io/releases/redis-7.0.2.tar.gz
 ENV REDIS_DOWNLOAD_SHA 5e57eafe7d4ac5ecb6a7d64d6b61db775616dbf903293b3fcc660716dbda5eeb
 
 RUN set -eux; \
+	sed -i -e 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/' /etc/apk/repositories; \
+	apk update; \
 	\
 	apk add --no-cache --virtual .build-deps \
 		coreutils \
@@ -95,8 +98,10 @@ RUN mkdir /data && chown redis:redis /data
 VOLUME /data
 WORKDIR /data
 
+COPY redis.conf /usr/local/etc/redis/redis.conf
 COPY docker-entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["docker-entrypoint.sh"]
 
 EXPOSE 6379
-CMD ["redis-server"]
+CMD [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+# CMD ["redis-server"]

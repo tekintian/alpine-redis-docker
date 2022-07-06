@@ -10,6 +10,7 @@ RUN apk add --no-cache \
 # add tzdata for https://github.com/docker-library/redis/issues/138
 		tzdata
 
+ENV TZ PRC
 ENV REDIS_VERSION 6.0.16
 ENV REDIS_DOWNLOAD_URL http://download.redis.io/releases/redis-6.0.16.tar.gz
 ENV REDIS_DOWNLOAD_SHA 3639bbf29aca1a1670de1ab2ce224d6511c63969e7e590d3cdf8f7888184fa19
@@ -95,8 +96,9 @@ RUN mkdir /data && chown redis:redis /data
 VOLUME /data
 WORKDIR /data
 
+COPY redis.conf /usr/local/etc/redis/redis.conf
 COPY docker-entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["docker-entrypoint.sh"]
 
 EXPOSE 6379
-CMD ["redis-server"]
+CMD [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
